@@ -3,17 +3,16 @@ import * as path from 'path'
 
 import mkdirp from 'mkdirp'
 import { PluginOption } from 'vite'
+import { Options } from '@vuetify/loader-shared'
 
 function isSubdir (root: string, test: string) {
   const relative = path.relative(root, test)
   return relative && !relative.startsWith('..') && !path.isAbsolute(relative)
 }
 
-export type stylesPluginOptions = true | 'none' | 'expose'
-
 const styleImportRegexp = /@use ['"]vuetify\/lib\/styles['"]/
 
-export function stylesPlugin (options: stylesPluginOptions = true): PluginOption {
+export function stylesPlugin (options: Options): PluginOption {
   const vuetifyBase = path.dirname(require.resolve('vuetify/package.json'))
   const files = new Set<string>()
 
@@ -51,9 +50,9 @@ export function stylesPlugin (options: stylesPluginOptions = true): PluginOption
         ['.css', '.scss', '.sass'].some(v => source.endsWith(v)) &&
         isSubdir(vuetifyBase, importer)
       ) {
-        if (options === 'none') {
+        if (options.styles === 'none') {
           return '__void__'
-        } else if (options === 'expose') {
+        } else if (options.styles === 'expose') {
           awaitResolve()
 
           const resolution = await this.resolve(
@@ -74,7 +73,7 @@ export function stylesPlugin (options: stylesPluginOptions = true): PluginOption
     },
     async transform (code, id) {
       if (
-        options === 'expose' &&
+        options.styles === 'expose' &&
         id.endsWith('.scss') &&
         styleImportRegexp.test(code)
       ) {

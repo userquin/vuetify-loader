@@ -75,7 +75,8 @@ module.exports = {
   plugins: [
     new VueLoaderPlugin(),
     new VuetifyLoaderPlugin({
-      progressiveImages: true
+      styles: 'none',
+      // progressiveImages: true
     }),
     // new BundleAnalyzerPlugin({
     //   analyzerMode: 'static',
